@@ -16,6 +16,12 @@ export class ConversationController {
         } else return this.service.getConversations();
     }
 
+    @Get("/agent/:agentId")
+    public getAgentConversations(@Param("agentId", ParseIntPipe) agentId: number, 
+        @Query("closed", ParseBoolPipe) closed?: boolean): Promise<Conversation[]> {
+            return this.service.getAgentConversations(agentId, closed)
+    }
+
     @Patch(":id")
     public patchConversation(@Param("id", ParseIntPipe) id: number, 
         @Body() data: UpdateConversationDto): Promise<UpdateResult> {

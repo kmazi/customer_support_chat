@@ -16,6 +16,12 @@ export class ConversationService {
         });
     }
 
+    public getAgentConversations(agentId: number, closed: boolean = false): Promise<Conversation[]> {
+        return this.conversationRepository.find({
+            where: { agentId, closed }
+        });
+    }
+
     public getConversations(): Promise<Conversation[]> {
         return this.conversationRepository.find({ relations: { customer: true, agent: true } });
     }

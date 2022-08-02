@@ -8,9 +8,14 @@ export class MessageController {
     @Inject(MessageService)
     private readonly service: MessageService;
 
-    @Get("/customer/:cid")
-    public getCustomerMessages(@Param("cid", ParseIntPipe) cid: number): Promise<Message[]> {
-        return this.service.getCustomerMessages(cid);
+    @Get("/customer/:cId")
+    public getCustomerMessages(@Param("cId", ParseIntPipe) cId: number): Promise<Message[]> {
+        return this.service.getCustomerMessages(cId);
+    }
+
+    @Get("/conversation/:convId")
+    public getConversationMessages(@Param("convId", ParseIntPipe) convId: number): Promise<Message[]> {
+        return this.service.getConversationMessages(convId)
     }
 
     @Post()
