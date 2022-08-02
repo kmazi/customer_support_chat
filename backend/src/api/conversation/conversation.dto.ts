@@ -17,3 +17,13 @@ export class CreateConversationDto {
     public customerId: number
 
 }
+
+export class UpdateConversationDto {
+    @IsBoolean()
+    @IsOptional()
+    public closed: boolean;
+
+    @IsNumber()
+    @IsOptional()
+    public agentId: number
+}

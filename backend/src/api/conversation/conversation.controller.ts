@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
-import { CreateConversationDto } from './conversation.dto';
+import { Body, Controller, Get, Inject, Logger, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Query, ValidationPipe } from '@nestjs/common';
+import { UpdateResult } from 'typeorm';
+import { CreateConversationDto, UpdateConversationDto } from './conversation.dto';
 import { Conversation } from './conversation.entity';
 import { ConversationService } from './conversation.service';
 
@@ -9,8 +10,16 @@ export class ConversationController {
     private readonly service: ConversationService;
 
     @Get()
-    public getConversations(): Promise<Conversation[]> {
-        return this.service.getConversations();
+    public getConversation(@Query('unattended', ParseBoolPipe) unattended?: boolean): Promise<Conversation[]> {
+        if (unattended) {
+            return this.service.getUnattendedConversations();
+        } else return this.service.getConversations();
+    }
+
+    @Patch(":id")
+    public patchConversation(@Param("id", ParseIntPipe) id: number, 
+        @Body() data: UpdateConversationDto): Promise<UpdateResult> {
+            return this.service.updateConversation(id, data)
     }
 
     @Post()

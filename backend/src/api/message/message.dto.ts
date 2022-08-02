@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateMessageDto {
     @IsString()
@@ -7,10 +7,11 @@ export class CreateMessageDto {
 
     @IsNumber()
     @IsNotEmpty()
-    senderId: number;
+    customerId: number;
 
     @IsNumber()
-    receiverId: number;
+    @IsOptional()
+    agentId: number;
 
     @IsNumber()
     @IsNotEmpty()

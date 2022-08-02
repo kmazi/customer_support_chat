@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Timestamp } from 'typeorm';
 import { Conversation } from '../conversation/conversation.entity';
 import { User } from '../user/user.entity';
 
@@ -11,18 +11,18 @@ export class Message{
     public body: string;
 
     @Column({ type: 'number', nullable: false })
-    senderId: number;
+    customerId: number;
 
     @ManyToOne(() => User)
-    @JoinColumn({ name: 'senderId' })
-    public sender: User;
+    @JoinColumn({ name: 'customerId' })
+    public customer: User;
 
-    @Column({ type: 'number' })
-    receiverId: number;
+    @Column({ type: 'number', nullable: true })
+    agentId: number;
 
     @ManyToOne(() => User)
-    @JoinColumn({ name: 'receiverId' })
-    public receiver: User;
+    @JoinColumn({ name: 'agentId' })
+    public agent: User;
 
     @Column({ type: 'number', nullable: false })
     conversationId: number;
@@ -36,8 +36,8 @@ export class Message{
    */
 
     @CreateDateColumn({ type: 'timestamp' })
-    public createdAt!: Date;
+    public createdAt!: Timestamp;
 
     @UpdateDateColumn({ type: 'timestamp' })
-    public updatedAt!: Date;
+    public updatedAt!: Timestamp;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateConversationDto } from './conversation.dto';
+import { IsNull, Repository, UpdateResult } from 'typeorm';
+import { CreateConversationDto, UpdateConversationDto } from './conversation.dto';
 import { Conversation } from './conversation.entity';
 
 @Injectable()
@@ -9,8 +9,19 @@ export class ConversationService {
     @InjectRepository(Conversation)
     private readonly conversationRepository: Repository<Conversation>;
 
+    public getUnattendedConversations(): Promise<Conversation[]> {
+        return this.conversationRepository.find({ 
+            where: { agentId: IsNull() },
+            relations: { customer: true, agent: true } 
+        });
+    }
+
     public getConversations(): Promise<Conversation[]> {
-        return this.conversationRepository.find({ relations: { customer: true } })
+        return this.conversationRepository.find({ relations: { customer: true, agent: true } });
+    }
+
+    public updateConversation(id: number, data: UpdateConversationDto): Promise<UpdateResult> {
+        return this.conversationRepository.update(id, data);
     }
 
     public createConversation(data: CreateConversationDto): Promise<Conversation> {
