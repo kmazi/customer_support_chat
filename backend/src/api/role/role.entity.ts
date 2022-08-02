@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, Unique } from 'typeorm';
 import { User } from '../user/user.entity';
 
 @Entity()
+@Unique("UQ_names", ["name"])
 export class Role{
     @PrimaryGeneratedColumn()
     public id!: number;

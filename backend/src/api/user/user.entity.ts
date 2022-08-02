@@ -1,9 +1,10 @@
 import { urlencoded } from 'express';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn, Unique } from 'typeorm';
 import { Conversation } from '../conversation/conversation.entity';
 import { Role } from '../role/role.entity';
 
 @Entity()
+@Unique("UQ_name_and_phone", ["name", "phone"])
 export class User {
   @PrimaryGeneratedColumn()
   public id!: number;
@@ -21,7 +22,7 @@ export class User {
   @JoinColumn({ name: "roleId"})
   public role: Role;
 
-  @OneToMany(() => Conversation, (conversation) => conversation.user)
+  @OneToMany(() => Conversation, (conversation) => conversation.customer)
   public conversations: Conversation[]
 
   /*

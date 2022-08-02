@@ -7,10 +7,10 @@ export class Message{
     @PrimaryGeneratedColumn()
     public id!: number;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', nullable: false })
     public body: string;
 
-    @Column({ type: 'number' })
+    @Column({ type: 'number', nullable: false })
     senderId: number;
 
     @ManyToOne(() => User)
@@ -24,7 +24,7 @@ export class Message{
     @JoinColumn({ name: 'receiverId' })
     public receiver: User;
 
-    @Column({ type: 'number' })
+    @Column({ type: 'number', nullable: false })
     conversationId: number;
 
     @ManyToOne(() => Conversation)

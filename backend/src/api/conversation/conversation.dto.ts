@@ -1,5 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { User } from '../user/user.entity';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf } from 'class-validator';
 
 export class CreateConversationDto {
     @IsString()
@@ -7,10 +6,14 @@ export class CreateConversationDto {
     public subject: string;
 
     @IsBoolean()
+    @IsOptional()
     public closed: boolean;
 
     @IsNumber()
-    @IsNotEmpty()
-    public userId: number
+    @IsOptional()
+    public agentId: number
+
+    @IsNumber()
+    public customerId: number
 
 }

@@ -6,6 +6,7 @@ export class CreateMessageDto {
     public body: string;
 
     @IsNumber()
+    @IsNotEmpty()
     senderId: number;
 
     @IsNumber()
