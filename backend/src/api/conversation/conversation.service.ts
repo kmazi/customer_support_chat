@@ -26,6 +26,10 @@ export class ConversationService {
         return this.conversationRepository.find({ relations: { customer: true, agent: true } });
     }
 
+    public getConversation(id: number): Promise<Conversation> {
+        return this.conversationRepository.findOneBy({ id });
+    }
+
     public updateConversation(id: number, data: UpdateConversationDto): Promise<UpdateResult> {
         return this.conversationRepository.update(id, data);
     }

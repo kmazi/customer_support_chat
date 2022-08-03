@@ -10,10 +10,15 @@ export class ConversationController {
     private readonly service: ConversationService;
 
     @Get()
-    public getConversation(@Query('unattended', ParseBoolPipe) unattended?: boolean): Promise<Conversation[]> {
+    public getConversations(@Query('unattended', ParseBoolPipe) unattended?: boolean): Promise<Conversation[]> {
         if (unattended) {
             return this.service.getUnattendedConversations();
         } else return this.service.getConversations();
+    }
+
+    @Get(":id")
+    public getConversation(@Param("id", ParseIntPipe) id: number): Promise<Conversation> {
+            return this.service.getConversation(id)
     }
 
     @Get("/agent/:agentId")

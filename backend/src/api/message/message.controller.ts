@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { CreateMessageDto } from './message.dto';
 import { Message } from './message.entity';
 import { MessageService } from './message.service';
@@ -19,7 +19,17 @@ export class MessageController {
     }
 
     @Post()
-    public createMessage(@Body() data: CreateMessageDto): Promise<Message> {
-        return this.service.createMessage(data);
+    public async createMessage(@Body() data: CreateMessageDto): Promise<Message> {
+        try {
+            const message = await this.service.createMessage(data);
+            return message;
+        } catch (error: any) {
+            if (error instanceof Error) {
+                throw new BadRequestException("BadRequest", error.message);
+            } else {
+                throw new BadRequestException("BadRequest", "An error occurred while saving your message in the storage.");
+            }
+        }
+        
     }
 }
