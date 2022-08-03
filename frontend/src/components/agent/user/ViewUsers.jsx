@@ -1,19 +1,34 @@
-import React, { Component } from "react";
-import '../../../App.css';
-import { Box, Heading, Container } from '@chakra-ui/react'
+import React from "react";
 
 
-class ViewUser extends Component {
-    render() {
+const ViewUsers = (props) => {
+    const mapResponse = props.users.map((val) => {
         return (
-            <Box bg='#f7fbfc' w='30%' p={4} color='rgb(22, 22, 87)'>
-                <Container>
-                    <Heading as='h3'>View User</Heading>
-                </Container>
-            </Box>
-            
+            <tr key={val.id}>
+                <td>{val.id}</td>
+                <td>{val.name}</td>
+                <td>{val.phone}</td>
+                <td>{val.role.name}</td>
+            </tr>
         );
-    }
-}
-  
-export default ViewUser;
+    });
+    return (
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    { mapResponse }
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+export default ViewUsers;
