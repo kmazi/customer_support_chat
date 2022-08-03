@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import '../../../App.css';
-import { Heading, Input, Button, Container, Box, FormControl,
-    FormLabel} from '@chakra-ui/react'
+import { Heading, Input, Button, Container, Box, FormControl, FormLabel, FormErrorMessage} from '@chakra-ui/react'
+import { Formik, Form, Field } from 'formik'
 
 
 class CreateUser extends Component {
     render() {
         return (
-            <Box bg='#f7fbfc' w='30%' p={4} color='rgb(22, 22, 87)'>
+            <Box bg='#f7fbfc' w='25%' p={4} color='rgb(22, 22, 87)'>
                 <Container>
                     <Heading as='h4'>Create User</Heading>
                     <FormControl>
