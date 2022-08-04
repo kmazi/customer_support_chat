@@ -102,7 +102,7 @@ const Home = () => {
 
       <div>
         <Link to={'/user/chats'}>Go to chat room</Link>
-        <Link to={'/conversations/incoming'} style={{ padding: '10px' }}>Incoming complaints</Link>
+        <Link to={'/conversations/incoming'} style={{ padding: '10px' }}>Admin</Link>
       </div>
 
     </div>
