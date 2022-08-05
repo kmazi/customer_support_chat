@@ -32,7 +32,7 @@ const UserChatRoom = () => {
         setSubmitting(false);
         const resVal = await resp.json();
         if (resp.status === 400) {
-
+            setErrorMessage(`Your message was not sent: ${resVal.message}`);
         } else {
             setNewMessage(resVal);
             resetForm();
@@ -134,7 +134,7 @@ const UserChatRoom = () => {
                 </div>
                 <div style={{ border: 'solid 1px', width: '50%', paddingBottom: '10px' }}>
 
-                    <ChatMessages newMessage={newMessage} />
+                    <ChatMessages userId={userId} agentId={agentId} convId={convId} />
                     <Formik
                         initialValues={{ body: '' }}
                         validate={values => {
