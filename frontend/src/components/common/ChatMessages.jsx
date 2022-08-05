@@ -4,18 +4,21 @@ import { useEffect } from "react";
 
 const ChatMessages = (props) => {
     const [messages, setMessages] = useState([]);
+    const userId = localStorage.getItem('chatUserId');
+    const agentId = props.agentId;
 
+    
     useEffect(() => {
         const loadMessages = async () => {
             let urlPath = '';
-            const baseUrl = 'http://0.0.0.0:3001/';
+            const baseUrl = 'http://0.0.0.0:3001';
             let url = '';
-            if (props.userId && props.agentId === null) {
-                urlPath = `message/sustomer/${props.userId}`;
+            if (localStorage.getItem('chatUserRole') === 'customer') {
+                urlPath = `message/customer/${userId}`;
             } else {
                 urlPath = `message/conversation/${props.convId | 6}`;
             }
-            url = `http://0.0.0.0:3001/${urlPath}`;
+            url = `${baseUrl}/${urlPath}`;
     
             const res = await fetch(url);
             if (res.status === 200) {
@@ -25,7 +28,7 @@ const ChatMessages = (props) => {
             }
         };
         loadMessages();
-    }, []);
+    }, [userId, agentId]);
 
     return (
         <div style={{ paddingBottom: '10px', minHeight: '450px' }}>

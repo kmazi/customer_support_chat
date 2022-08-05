@@ -7,12 +7,12 @@ const UserChatRoom = () => {
     const [newMessage, setNewMessage] = useState({});
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [userId, setUserId] = useState(null);
     const [agentId, setAgentId] = useState(null);
-    const [detailUpdate, setDetailUpdate] = useState('');
 
     const [convId, setConvId] = useState(0);
     const [convStatus, setConvStatus] = useState('');
+
+    const userId = Number(localStorage.getItem('chatUserId'));
 
     async function sendMessage(values, { setSubmitting, resetForm }) {
         // Append customer detail value from state
@@ -40,10 +40,7 @@ const UserChatRoom = () => {
     }
 
     function storeUserDetails(values, { setSubmitting }) {
-        setUserId(values.userId);
-        setAgentId(values.agentId);
-        setDetailUpdate(`Your information has been saved`);
-        setSubmitting(false);
+        
     }
 
     async function createConversation(values, { setSubmitting }) {
@@ -69,38 +66,6 @@ const UserChatRoom = () => {
         <div>
             <h2>Welcome to your chat room!</h2>
             <div>
-                <h4 style={{ margin: '5px', }}>Login details</h4>
-                <Formik initialValues={{ userId: '', agentId: '' }}
-                    validate={values => {
-                        const errors = {};
-                        return errors;
-                    }
-                    }
-                    onSubmit={storeUserDetails}>
-                    {
-                        ({ isSubmitting }) => (
-                            <Form>
-                                <div>
-                                    <div style={{ display: 'inline-block' }}>
-                                        <label htmlFor='userId' style={{ width: '80px', display: 'inline-block', margin: '5px' }}>userId</label>
-                                        <Field type="number" name="userId" />
-                                        <ErrorMessage name="userId" component="div" />
-                                    </div>
-                                    <div style={{ display: 'inline-block' }}>
-                                        <label htmlFor='agentId' style={{ width: '80px', display: 'inline-block', margin: '5px' }}>agentId</label>
-                                        <Field type="number" style={{ display: 'inline-block', marginRight: '5px' }} name="agentId" />
-                                        <ErrorMessage name="agentId" component="div" />
-                                    </div>
-                                </div>
-                                <button style={{ display: 'inline-block', width: '100px', marginLeft: '100px', marginTop: '10px' }} type="submit" disabled={isSubmitting}>Save</button>
-
-                            </Form>
-                        )
-                    }
-                </Formik>
-
-                <p>{detailUpdate}</p>
-
                 <h4 style={{ margin: '5px', }}>Start a conversation</h4>
                 <Formik initialValues={{ subject: '' }}
                     validate={values => {
@@ -134,7 +99,7 @@ const UserChatRoom = () => {
                 </div>
                 <div style={{ border: 'solid 1px', width: '50%', paddingBottom: '10px' }}>
 
-                    <ChatMessages userId={userId} agentId={agentId} convId={convId} />
+                    <ChatMessages agentId={agentId} convId={convId} />
                     <Formik
                         initialValues={{ body: '' }}
                         validate={values => {

@@ -19,7 +19,6 @@ const SignIn = (props) => {
             const user = await res.json();
             localStorage.setItem('chatUserId', JSON.stringify(user.id));
             localStorage.setItem('chatUserRole', user.role.name);
-            localStorage.setItem('chatOpenConversation', JSON.stringify(user.conversation? user.conversation.id : null));
             navigate('/user/chats');
         } else {
             setError("An error occurred while signing you in. Try again with correct credentials.");
