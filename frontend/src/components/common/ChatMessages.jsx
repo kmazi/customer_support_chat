@@ -4,10 +4,12 @@ import { useEffect } from "react";
 
 const ChatMessages = (props) => {
     const [messages, setMessages] = useState([]);
+
     const userId = localStorage.getItem('chatUserId');
     const agentId = props.agentId;
 
     
+
     useEffect(() => {
         const loadMessages = async () => {
             let urlPath = '';
@@ -16,10 +18,10 @@ const ChatMessages = (props) => {
             if (localStorage.getItem('chatUserRole') === 'customer') {
                 urlPath = `message/customer/${userId}`;
             } else {
-                urlPath = `message/conversation/${props.convId | 6}`;
+                urlPath = `message/conversation/${props.convId}`;
             }
             url = `${baseUrl}/${urlPath}`;
-    
+
             const res = await fetch(url);
             if (res.status === 200) {
                 const data = await res.json();

@@ -13,11 +13,11 @@ export class Conversation{
     @Column({ type: 'text', nullable: false })
     public subject: string;
 
-    @Column({ type: 'number', nullable: false })
+    @Column({ type: 'number', name: "customer_id", nullable: false })
     customerId: number;
 
     @ManyToOne(() => User, (customer) => customer.conversations)
-    @JoinColumn({ name: 'customerId' })
+    @JoinColumn({ name: 'customer_id' })
     public customer: User;
 
     @Column({ type: 'number', nullable: true})
@@ -31,7 +31,7 @@ export class Conversation{
    * Create and Update Date Columns
    */
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn({ type: 'timestamp', name: "created_at" })
     public createdAt!: Date;
 
     @UpdateDateColumn({ type: 'timestamp' })

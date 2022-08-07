@@ -15,11 +15,11 @@ export class User {
   @Column({ type: 'varchar', length: 15})
   public phone: string;
 
-  @Column({ type: 'number', nullable: false })
+  @Column({ type: 'number', name: "role_id", nullable: false })
   public roleId: number;
 
   @ManyToOne(() => Role, (role) => role.users)
-  @JoinColumn({ name: "roleId"})
+  @JoinColumn({ name: "role_id"})
   public role: Role;
 
   @OneToMany(() => Conversation, (conversation) => conversation.customer)

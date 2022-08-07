@@ -1,6 +1,6 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChatMessages from "../../common/ChatMessages";
 
 const UserChatRoom = () => {
@@ -9,10 +9,17 @@ const UserChatRoom = () => {
 
     const [agentId, setAgentId] = useState(null);
 
-    const [convId, setConvId] = useState(0);
+    let convId = JSON.parse(localStorage.getItem('chatConvId'));
+    const [hideConvForm, setHideConvForm] = useState(true);
     const [convStatus, setConvStatus] = useState('');
 
     const userId = Number(localStorage.getItem('chatUserId'));
+
+    useEffect(() => {
+        if (!convId) {
+            setHideConvForm(false);
+        } else setHideConvForm(true);
+    });
 
     async function sendMessage(values, { setSubmitting, resetForm }) {
         // Append customer detail value from state
@@ -52,18 +59,18 @@ const UserChatRoom = () => {
         });
 
         setSubmitting(false);
-        if (resp.status === 400) {
-            setConvStatus('Please set the subject for discussion. Maybe you have not specified your id.')
-            return {}
-        } else {
+        if (resp.status === 200) {
             setConvStatus('You have successfully started a conversation.')
             const resVal = await resp.json();
-            setConvId(resVal.id);
+            localStorage.setItem('chatConvId', JSON.stringify(resVal.id));            
+        } else {
+            setConvStatus('Please set the subject for discussion.')
+            return {}
         }
     }
 
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '70%', padding: '10px', margin: '0 auto' }}>
             <h2>Welcome to your chat room!</h2>
             <div>
                 <h4 style={{ margin: '5px', }}>Start a conversation</h4>
@@ -99,7 +106,7 @@ const UserChatRoom = () => {
                 </div>
                 <div style={{ border: 'solid 1px', width: '50%', paddingBottom: '10px' }}>
 
-                    <ChatMessages agentId={agentId} convId={convId} />
+                    <ChatMessages agentId={agentId} />
                     <Formik
                         initialValues={{ body: '' }}
                         validate={values => {

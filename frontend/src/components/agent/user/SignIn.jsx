@@ -17,8 +17,19 @@ const SignIn = (props) => {
 
         if (res.status === 200) {
             const user = await res.json();
-            localStorage.setItem('chatUserId', JSON.stringify(user.id));
-            localStorage.setItem('chatUserRole', user.role.name);
+            const role = user.role_name;
+            const convId = user.convId;
+
+            // store user detail in local storage
+            if (role === 'customer') {
+                localStorage.setItem('chatUserId', JSON.stringify(user.id));
+                localStorage.setItem('chatConvId', JSON.stringify(convId));
+            } else if (role === 'agent') {
+                localStorage.setItem('chatAgentId', JSON.stringify(user.id));
+            }
+
+            localStorage.setItem('chatUserRole', role);
+            // Navigate to chat room after identifying user
             navigate('/user/chats');
         } else {
             setError("An error occurred while signing you in. Try again with correct credentials.");
