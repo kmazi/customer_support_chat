@@ -13,24 +13,29 @@ const SignIn = (props) => {
             body: JSON.stringify(values, null, 2)
         });
 
-        setSubmitting(false);
-
         if (res.status === 200) {
-            const user = await res.json();
-            const role = user.role_name;
-            const convId = user.convId;
-
-            // store user detail in local storage
-            if (role === 'customer') {
-                localStorage.setItem('chatUserId', JSON.stringify(user.id));
-                localStorage.setItem('chatConvId', JSON.stringify(convId));
-            } else if (role === 'agent') {
-                localStorage.setItem('chatAgentId', JSON.stringify(user.id));
+            let user = await res.json();
+            
+            if (user.length > 0) {
+                user = user[0];
+                const role = user.role_name;
+                const convId = user.convid;
+                // store user detail in local storage
+                if (role === 'customer') {
+                    localStorage.setItem('chatUserId', JSON.stringify(user.id));
+                    if (!user.closed) {
+                        localStorage.setItem('chatConvId', JSON.stringify(convId));
+                    }
+                } else if (role === 'agent') {
+                    localStorage.setItem('chatAgentId', JSON.stringify(user.id));
+                }
+                localStorage.setItem('chatUserRole', role);
+                setSubmitting(false);
+                // Navigate to chat room after identifying user
+                navigate('/user/chats');
+            } else {
+                setError("User does not exist in the database.");
             }
-
-            localStorage.setItem('chatUserRole', role);
-            // Navigate to chat room after identifying user
-            navigate('/user/chats');
         } else {
             setError("An error occurred while signing you in. Try again with correct credentials.");
         }
@@ -61,7 +66,7 @@ const SignIn = (props) => {
                         </div>
                         <div style={{ paddingTop: '10px' }}>
                             <button style={{ display: 'inline-block', marginRight: '30px' }} type="submit" disabled={isSubmitting}>Sign In</button>
-                            <div style={{ display: props.registered? 'none': 'inline-block'}}>
+                            <div style={{ display: props.registered ? 'none' : 'inline-block' }}>
                                 <label htmlFor="signup">No account?</label>
                                 <button onClick={(e) => {
                                     e.preventDefault()

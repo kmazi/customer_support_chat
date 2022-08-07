@@ -29,6 +29,7 @@ const ChatMessages = (props) => {
                 setMessages(data);
             }
         };
+
         loadMessages();
     }, [userId, agentId]);
 

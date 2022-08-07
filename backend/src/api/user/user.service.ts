@@ -21,13 +21,17 @@ export class UserService {
             INNER JOIN role
             ON public.user.role_id = role.id
             LEFT JOIN (
-                SELECT DISTINCT ON (conversation.customer_id) conversation.customer_id, created_at, closed, conversation.id as convId
+                SELECT DISTINCT ON (conversation.customer_id) conversation.customer_id, closed, conversation.id as convId
                 FROM conversation
                 ORDER BY conversation.customer_id DESC
             ) conversation ON conversation.customer_id = public.user.id
-            WHERE public.user.name = $1 AND public.user.phone = $2 AND conversation.closed = false;
+            WHERE public.user.name = $1 AND public.user.phone = $2;
         `, [data.name, data.phone])
     }
+
+    // public getLogin(data: LoginUserDto): Promise<User> {
+    //     return this.userRepository.findOne({ relations: { role: true}, where: { name: data.name, phone: data.phone } });
+    // }
 
     public getUsers(): Promise<User[]> {
         return this.userRepository.find({ relations: { role: true } })

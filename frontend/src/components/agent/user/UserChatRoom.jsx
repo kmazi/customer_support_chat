@@ -13,12 +13,12 @@ const UserChatRoom = () => {
     const [hideConvForm, setHideConvForm] = useState(true);
     const [convStatus, setConvStatus] = useState('');
 
-    const userId = Number(localStorage.getItem('chatUserId'));
+    const userId = JSON.parse(localStorage.getItem('chatUserId'));
 
     useEffect(() => {
-        if (!convId) {
-            setHideConvForm(false);
-        } else setHideConvForm(true);
+        if (JSON.parse(localStorage.getItem('chatConvId'))) {
+            setHideConvForm(true);
+        } else setHideConvForm(false);
     });
 
     async function sendMessage(values, { setSubmitting, resetForm }) {
@@ -27,7 +27,7 @@ const UserChatRoom = () => {
         if (agentId) {
             values.agentId = agentId;
         }
-        values.conversationId = convId;
+        values.conversationId = JSON.parse(localStorage.getItem('chatConvId'));
 
         // Make api call to send message
         const resp = await fetch('http://0.0.0.0:3001/message', {
@@ -39,15 +39,11 @@ const UserChatRoom = () => {
         setSubmitting(false);
         const resVal = await resp.json();
         if (resp.status === 400) {
-            setErrorMessage(`Your message was not sent: ${resVal.message}`);
+            setErrorMessage("Your message was not sent: You have to state the subject of your conversation before sending messages.");
         } else {
             setNewMessage(resVal);
             resetForm();
         }
-    }
-
-    function storeUserDetails(values, { setSubmitting }) {
-        
     }
 
     async function createConversation(values, { setSubmitting }) {
@@ -59,7 +55,7 @@ const UserChatRoom = () => {
         });
 
         setSubmitting(false);
-        if (resp.status === 200) {
+        if (resp.status === 201) {
             setConvStatus('You have successfully started a conversation.')
             const resVal = await resp.json();
             localStorage.setItem('chatConvId', JSON.stringify(resVal.id));            
@@ -72,7 +68,7 @@ const UserChatRoom = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', width: '70%', padding: '10px', margin: '0 auto' }}>
             <h2>Welcome to your chat room!</h2>
-            <div>
+            <div style={{ display: hideConvForm ? 'none': 'block' }}>
                 <h4 style={{ margin: '5px', }}>Start a conversation</h4>
                 <Formik initialValues={{ subject: '' }}
                     validate={values => {
