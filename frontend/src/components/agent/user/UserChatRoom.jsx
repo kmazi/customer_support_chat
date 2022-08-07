@@ -7,13 +7,13 @@ const UserChatRoom = () => {
     const [newMessage, setNewMessage] = useState({});
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [agentId, setAgentId] = useState(null);
-
+    
     let convId = JSON.parse(localStorage.getItem('chatConvId'));
     const [hideConvForm, setHideConvForm] = useState(true);
     const [convStatus, setConvStatus] = useState('');
-
+    
     const userId = JSON.parse(localStorage.getItem('chatUserId'));
+    const agentId = JSON.parse(localStorage.getItem('chatAgentId'));
 
     useEffect(() => {
         if (JSON.parse(localStorage.getItem('chatConvId'))) {
@@ -66,7 +66,7 @@ const UserChatRoom = () => {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', width: '70%', padding: '10px', margin: '0 auto' }}>
+        <div className='bgColor' style={{ display: 'flex', flexDirection: 'column', width: '70%', padding: '10px', margin: '0 auto' }}>
             <h2>Welcome to your chat room!</h2>
             <div style={{ display: hideConvForm ? 'none': 'block' }}>
                 <h4 style={{ margin: '5px', }}>Start a conversation</h4>
@@ -98,6 +98,13 @@ const UserChatRoom = () => {
 
             <div>
                 <div>
+                <button onClick={() => {
+                    // Clear local storage
+                    localStorage.removeItem('chatConvId');
+                    localStorage.removeItem('chatUserId');
+                    localStorage.removeItem('chatAgentId');
+                    localStorage.removeItem('chatUserRole');
+                }} style={{ float: 'right' }}>Log out</button>
                     <h4>Messages</h4>
                 </div>
                 <div style={{ border: 'solid 1px', width: '50%', paddingBottom: '10px' }}>
@@ -123,6 +130,7 @@ const UserChatRoom = () => {
                             )
                         }
                     </Formik>
+                    
                     <div>{errorMessage}</div>
                 </div>
             </div>

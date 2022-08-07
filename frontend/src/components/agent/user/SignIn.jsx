@@ -31,8 +31,12 @@ const SignIn = (props) => {
                 }
                 localStorage.setItem('chatUserRole', role);
                 setSubmitting(false);
+
                 // Navigate to chat room after identifying user
-                navigate('/user/chats');
+                if (role === 'customer') {
+                    navigate('/user/chats');
+                } else navigate('/conversations/incoming');
+
             } else {
                 setError("User does not exist in the database.");
             }

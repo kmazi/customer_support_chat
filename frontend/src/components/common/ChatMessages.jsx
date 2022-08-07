@@ -6,6 +6,7 @@ const ChatMessages = (props) => {
     const [messages, setMessages] = useState([]);
 
     const userId = localStorage.getItem('chatUserId');
+    const convId = localStorage.getItem('chatConvId');
     const agentId = props.agentId;
 
     
@@ -18,7 +19,7 @@ const ChatMessages = (props) => {
             if (localStorage.getItem('chatUserRole') === 'customer') {
                 urlPath = `message/customer/${userId}`;
             } else {
-                urlPath = `message/conversation/${props.convId}`;
+                urlPath = `message/conversation/${convId}`;
             }
             url = `${baseUrl}/${urlPath}`;
 
