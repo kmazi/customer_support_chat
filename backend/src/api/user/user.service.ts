@@ -23,6 +23,7 @@ export class UserService {
             LEFT JOIN (
                 SELECT DISTINCT ON (conversation.customer_id) conversation.customer_id, closed, conversation.id as convId
                 FROM conversation
+                WHERE conversation.closed = false
                 ORDER BY conversation.customer_id DESC
             ) conversation ON conversation.customer_id = public.user.id
             WHERE public.user.name = $1 AND public.user.phone = $2;

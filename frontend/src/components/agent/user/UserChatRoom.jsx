@@ -1,22 +1,30 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React from "react";
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import ChatMessages from "../../common/ChatMessages";
 
 const UserChatRoom = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const [newMessage, setNewMessage] = useState({});
     const [errorMessage, setErrorMessage] = useState('');
-
-    
-    let convId = JSON.parse(localStorage.getItem('chatConvId'));
     const [hideConvForm, setHideConvForm] = useState(true);
     const [convStatus, setConvStatus] = useState('');
-    
-    const userId = JSON.parse(localStorage.getItem('chatUserId'));
-    const agentId = JSON.parse(localStorage.getItem('chatAgentId'));
+    const [convId, setConvId] = useState(null);
+
+    const userId = location.state.chatUserId;
+    const agentId = location.state.chatAgentId;
+    const chatUserRole = location.state.chatUserRole;
 
     useEffect(() => {
-        if (JSON.parse(localStorage.getItem('chatConvId'))) {
+        const conversationId = location.state.chatConvId;
+        if (conversationId) setConvId(conversationId);
+    });
+
+    useEffect(() => {
+        if (convId) {
             setHideConvForm(true);
         } else setHideConvForm(false);
     });
@@ -27,7 +35,7 @@ const UserChatRoom = () => {
         if (agentId) {
             values.agentId = agentId;
         }
-        values.conversationId = JSON.parse(localStorage.getItem('chatConvId'));
+        values.conversationId = convId;
 
         // Make api call to send message
         const resp = await fetch('http://0.0.0.0:3001/message', {
@@ -56,9 +64,9 @@ const UserChatRoom = () => {
 
         setSubmitting(false);
         if (resp.status === 201) {
-            setConvStatus('You have successfully started a conversation.')
             const resVal = await resp.json();
-            localStorage.setItem('chatConvId', JSON.stringify(resVal.id));            
+            setConvId(resVal.id);
+            setConvStatus('You have successfully started a conversation.');
         } else {
             setConvStatus('Please set the subject for discussion.')
             return {}
@@ -67,8 +75,18 @@ const UserChatRoom = () => {
 
     return (
         <div className='bgColor' style={{ display: 'flex', flexDirection: 'column', width: '70%', padding: '10px', margin: '0 auto' }}>
-            <h2>Welcome to your chat room!</h2>
-            <div style={{ display: hideConvForm ? 'none': 'block' }}>
+            <div style={{ display: 'flex' }}>
+                <h2 style={{ paddingRight: '40px' }}>Welcome to your chat room!</h2>
+                <div>
+                    <button onClick={() => {
+                        // Clear local storage
+                        navigate('/', { state: {} });
+                    }} style={{ marginTop: '24px' }}>Log out</button>
+
+                </div>
+            </div>
+
+            <div style={{ display: hideConvForm ? 'none' : 'block' }}>
                 <h4 style={{ margin: '5px', }}>Start a conversation</h4>
                 <Formik initialValues={{ subject: '' }}
                     validate={values => {
@@ -97,19 +115,9 @@ const UserChatRoom = () => {
             </div>
 
             <div>
-                <div>
-                <button onClick={() => {
-                    // Clear local storage
-                    localStorage.removeItem('chatConvId');
-                    localStorage.removeItem('chatUserId');
-                    localStorage.removeItem('chatAgentId');
-                    localStorage.removeItem('chatUserRole');
-                }} style={{ float: 'right' }}>Log out</button>
-                    <h4>Messages</h4>
-                </div>
                 <div style={{ border: 'solid 1px', width: '50%', paddingBottom: '10px' }}>
 
-                    <ChatMessages agentId={agentId} />
+                    <ChatMessages userId={userId} role={chatUserRole} convId={convId} agentId={agentId} />
                     <Formik
                         initialValues={{ body: '' }}
                         validate={values => {
@@ -122,7 +130,7 @@ const UserChatRoom = () => {
                             ({ isSubmitting }) => (
                                 <Form>
                                     <div style={{ display: 'inline-block', width: '100%' }}>
-                                        <Field type="text" as='textarea' style={{ display: 'inline-block', margin: '5px', width: '90%'}} name="body" />
+                                        <Field type="text" as='textarea' style={{ display: 'inline-block', margin: '5px', width: '90%' }} name="body" />
                                         <ErrorMessage name="body" component="div" />
                                         <button type="submit" disabled={isSubmitting} style={{ margin: '5px' }}>Send</button>
                                     </div>
@@ -130,7 +138,7 @@ const UserChatRoom = () => {
                             )
                         }
                     </Formik>
-                    
+
                     <div>{errorMessage}</div>
                 </div>
             </div>

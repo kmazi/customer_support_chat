@@ -17,9 +17,10 @@ const SignUp = (props) => {
         setSubmitting(false);
 
         const resVal = await resp.json();
-        if (resp.status === 400) {
-            setRes(`User creation failed: ${resVal.message[0]}`)
-        } else setRes('User created successfully.');
+        if (resp.status === 201) {
+            setRes('User created successfully.');
+            props.setRegistered(true);
+        } else setRes(`User creation failed: ${resVal.message}`);
     }
 
     return (

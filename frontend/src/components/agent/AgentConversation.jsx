@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AgentConversation = () => {
     const [conversations, setConversations] = useState([]);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    useEffect(() => {
-        const agentId = JSON.parse(localStorage.getItem('chatAgentId'));
+    const agentId = location.state.chatAgentId;
+    const role = location.state.chatUserRole;
+
+    useEffect(() => {        
         const loadAgentConversations = async () => {
             const conv = await fetch(`http://0.0.0.0:3001/conversation/agent/${agentId}?closed=false`);
             const res = await conv.json();
@@ -22,9 +25,30 @@ const AgentConversation = () => {
 
     const startConversation = (e) => {
         const btn = e.currentTarget;
-        localStorage.setItem('chatConvId', btn.name);
-        localStorage.setItem('chatUserId', btn.id)
-        navigate('/user/chats');
+        navigate('/user/chats', {state: {
+            chatConvId: JSON.parse(btn.name),
+            chatUserId: JSON.parse(btn.id),
+            chatAgentId: agentId,
+            chatUserRole: role
+        }});
+    };
+
+    const closeConversation = async (e) => {
+        const btn = e.currentTarget;
+        const convId = JSON.parse(btn.name);
+
+        const update = await fetch(`http://0.0.0.0:3001/conversation/${convId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({ closed: true }, null, 2)
+        });
+
+        if (update.status === 200) {
+            const updatedConversation = conversations.filter(conv => conv.id !== convId);
+            setConversations(updatedConversation);
+        } else {
+            alert('An error occurred while closing the conversation.');
+        }
     };
 
     return (
@@ -32,10 +56,10 @@ const AgentConversation = () => {
             <h3>Agent's Conversations</h3>
             {
                 conversations.map((conversation) => (
-                    <div key={conversation.id}>
+                    <div style={{ margin: '0 4px 5px', background: '#edf7ff', padding: '0 5px 5px' }} key={conversation.id}>
                         <p>{conversation.subject}</p>
-                        <button id={conversation.customerId} name={conversation.id} onClick={ startConversation }>reply</button>
-                        <label style={{ float: 'right' }} htmlFor="">{new Date(conversation.createdAt).getMinutes()} mins</label>
+                        <button style={{ marginRight: '5px'}} id={conversation.customerId} name={conversation.id} onClick={ startConversation }>reply</button>
+                        <button style={{ marginLeft: '5px'}} id={conversation.customerId} name={conversation.id} onClick={ closeConversation }>close</button>
                     </div>
                 ))
             }

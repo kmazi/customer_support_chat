@@ -6,7 +6,7 @@ const SignIn = (props) => {
     const navigate = useNavigate();
     const [error, setError] = useState("");
 
-    const storeUserDetails = async (values, { setSubmitting }) => {
+    const signInUser = async (values, { setSubmitting }) => {
         const res = await fetch('http://0.0.0.0:3001/user/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -20,22 +20,22 @@ const SignIn = (props) => {
                 user = user[0];
                 const role = user.role_name;
                 const convId = user.convid;
+                const uid = user.id;
                 // store user detail in local storage
+                const locationObj = { chatUserRole: role}
                 if (role === 'customer') {
-                    localStorage.setItem('chatUserId', JSON.stringify(user.id));
+                    locationObj.chatUserId = uid;
                     if (!user.closed) {
-                        localStorage.setItem('chatConvId', JSON.stringify(convId));
+                        locationObj.chatConvId = convId;
                     }
                 } else if (role === 'agent') {
-                    localStorage.setItem('chatAgentId', JSON.stringify(user.id));
+                    locationObj.chatAgentId = uid;
                 }
-                localStorage.setItem('chatUserRole', role);
                 setSubmitting(false);
 
                 // Navigate to chat room after identifying user
-                if (role === 'customer') {
-                    navigate('/user/chats');
-                } else navigate('/conversations/incoming');
+                const url = role === 'customer'? '/user/chats' : '/conversations/incoming';
+                navigate(url, {state: locationObj});
 
             } else {
                 setError("User does not exist in the database.");
@@ -52,7 +52,7 @@ const SignIn = (props) => {
                 return errors;
             }
             }
-            onSubmit={storeUserDetails}>
+            onSubmit={signInUser}>
             {
                 ({ isSubmitting }) => (
                     <Form>

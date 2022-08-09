@@ -5,18 +5,16 @@ import { useEffect } from "react";
 const ChatMessages = (props) => {
     const [messages, setMessages] = useState([]);
 
-    const userId = localStorage.getItem('chatUserId');
-    const convId = localStorage.getItem('chatConvId');
-    const agentId = props.agentId;
-
-    
+    const convId = props.convId;
+    const userId = props.userId;
+    const role = props.role;
 
     useEffect(() => {
         const loadMessages = async () => {
             let urlPath = '';
             const baseUrl = 'http://0.0.0.0:3001';
             let url = '';
-            if (localStorage.getItem('chatUserRole') === 'customer') {
+            if (role === 'customer') {
                 urlPath = `message/customer/${userId}`;
             } else {
                 urlPath = `message/conversation/${convId}`;
@@ -26,22 +24,25 @@ const ChatMessages = (props) => {
             const res = await fetch(url);
             if (res.status === 200) {
                 const data = await res.json();
-                console.log(data);
                 setMessages(data);
             }
         };
 
-        loadMessages();
-    }, [userId, agentId]);
+        let timer = setInterval(loadMessages, 5000);
+        return (() => {
+            clearInterval(timer);
+            timer = null;
+        });
+    }, [convId]);
 
     return (
         <div style={{ paddingBottom: '10px', minHeight: '450px' }}>
             <ul>
                 {
                     messages.map(message => (
-                        <li key={message.id}>
+                        <li style={{ margin: '0 4px 5px', background: message.agentId === null? '#edf7ff' : '#cfe8ff', padding: '2px 5px 5px' }} key={message.id}>
                             <div>
-                                <p>{message.body}</p>
+                                <p style={{ padding: '0 5px 5px' }}>{message.body}</p>
                             </div>
                         </li>
                     ))
