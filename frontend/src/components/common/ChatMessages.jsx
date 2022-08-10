@@ -40,7 +40,7 @@ const ChatMessages = (props) => {
             <ul>
                 {
                     messages.map(message => (
-                        <li style={{ margin: '0 4px 5px', background: message.agentId === null? '#edf7ff' : '#cfe8ff', padding: '2px 5px 5px' }} key={message.id}>
+                        <li style={{ margin: '0 4px 5px', background: message.agentId === null? '#c5d6fc' : '#cfe8ff', padding: '2px 5px 5px' }} key={message.id}>
                             <div>
                                 <p style={{ padding: '0 5px 5px' }}>{message.body}</p>
                             </div>

@@ -47,7 +47,7 @@ const IncomingConversation = () => {
             <h3>Incoming Messages</h3>
             {
                 conversations.map((conversation, index) => (
-                    <div style={{ margin: '0 4px 5px', background: '#edf7ff', padding: '0 5px 5px' }} key={conversation.id}>
+                    <div style={{ margin: '0 4px 5px', background: '#c5d6fc', padding: '0 5px 5px' }} key={conversation.id}>
                         <p>{conversation.subject}</p>
                         <button id={index} name={conversation.id} onClick={joinAgentToConversation}>Join conversation</button>
                     </div>
