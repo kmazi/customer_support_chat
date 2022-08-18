@@ -16,13 +16,19 @@ const IncomingConversation = () => {
                 setConversations(res);
             }
         };
+        loadIncomingConversations();
+    }, [conversations]);
 
-        let timer = setInterval(loadIncomingConversations, 5000);
+    useEffect(() => {
+        const eventSource = new EventSource('http://0.0.0.0:3001/conversation/unattended');
+        eventSource.onmessage = ((e) => {
+            console.log('The incoming data is --------------------------', e.data);
+            
+        });
         return () => {
-            clearInterval(timer);
-            timer = null;
-        };
-    });
+            eventSource.close();
+        }
+    }, []);
 
     const joinAgentToConversation = async (e) => {
         const conversationId = e.currentTarget.name;
@@ -47,7 +53,7 @@ const IncomingConversation = () => {
             <h3>Incoming Messages</h3>
             {
                 conversations.map((conversation, index) => (
-                    <div style={{ margin: '0 4px 5px', background: '#c5d6fc', padding: '0 5px 5px' }} key={conversation.id}>
+                    <div style={{ background: '#c5d6fc', margin: '0 0 8px', padding: '2px 5px 10px' }} key={conversation.id}>
                         <p>{conversation.subject}</p>
                         <button id={index} name={conversation.id} onClick={joinAgentToConversation}>Join conversation</button>
                     </div>

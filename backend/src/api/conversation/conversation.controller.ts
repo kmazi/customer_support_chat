@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Inject, Logger, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Query, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Logger, MessageEvent, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Query, Sse } from '@nestjs/common';
+import { interval, Observable, map } from 'rxjs';
 import { UpdateResult } from 'typeorm';
 import { CreateConversationDto, UpdateConversationDto } from './conversation.dto';
 import { Conversation } from './conversation.entity';
@@ -16,21 +17,29 @@ export class ConversationController {
         } else return this.service.getConversations();
     }
 
+    @Sse('unattended')
+    public async getIncomingConversations(): Promise<Observable<MessageEvent>> {
+        const data = await this.service.getUnattendedConversations();
+        return interval(2000).pipe(
+            map((_) => ({ data: {name: 'Prince'} } as MessageEvent))
+        );
+    }
+
     @Get(":id")
     public getConversation(@Param("id", ParseIntPipe) id: number): Promise<Conversation> {
-            return this.service.getConversation(id)
+        return this.service.getConversation(id)
     }
 
     @Get("/agent/:agentId")
-    public getAgentConversations(@Param("agentId", ParseIntPipe) agentId: number, 
+    public getAgentConversations(@Param("agentId", ParseIntPipe) agentId: number,
         @Query("closed", ParseBoolPipe) closed?: boolean): Promise<Conversation[]> {
-            return this.service.getAgentConversations(agentId, closed)
+        return this.service.getAgentConversations(agentId, closed)
     }
 
     @Patch(":id")
-    public patchConversation(@Param("id", ParseIntPipe) id: number, 
+    public patchConversation(@Param("id", ParseIntPipe) id: number,
         @Body() data: UpdateConversationDto): Promise<UpdateResult> {
-            return this.service.updateConversation(id, data)
+        return this.service.updateConversation(id, data)
     }
 
     @Post()

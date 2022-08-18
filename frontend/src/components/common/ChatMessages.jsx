@@ -8,6 +8,23 @@ const ChatMessages = (props) => {
     const convId = props.convId;
     const userId = props.userId;
     const role = props.role;
+    let margin1, margin2, bg1, bg2 = null;
+
+    switch (role) {
+        case 'customer':
+            margin1 = '0 5px 5px 94px';
+            margin2 = '0 94px 5px 5px';
+            bg1 = '#c5d6fc';
+            bg2 = '#cfe8ff';
+            break;
+        case 'agent':
+            margin1 = '0 94px 5px 5px';
+            margin2 = '0 5px 5px 94px';
+            bg2 = '#c5d6fc';
+            bg1 = '#cfe8ff';
+        default:
+            break;
+    }
 
     useEffect(() => {
         const loadMessages = async () => {
@@ -27,27 +44,21 @@ const ChatMessages = (props) => {
                 setMessages(data);
             }
         };
-
-        let timer = setInterval(loadMessages, 5000);
-        return (() => {
-            clearInterval(timer);
-            timer = null;
-        });
-    }, [convId]);
+        loadMessages();
+    });
 
     return (
         <div style={{ paddingBottom: '10px', minHeight: '450px' }}>
-            <ul>
-                {
-                    messages.map(message => (
-                        <li style={{ margin: '0 4px 5px', background: message.agentId === null? '#c5d6fc' : '#cfe8ff', padding: '2px 5px 5px' }} key={message.id}>
-                            <div>
-                                <p style={{ padding: '0 5px 5px' }}>{message.body}</p>
-                            </div>
-                        </li>
-                    ))
-                }
-            </ul>
+
+            {
+                messages.map(message => (
+
+                    <div style={{ margin: message.agentId === null ? margin1 : margin2, background: message.agentId === null ? bg1 : bg2, padding: '2px 5px' }} key={message.id}>
+                        <p style={{ padding: '0 5px 5px' }}>{message.body}</p>
+                    </div>
+
+                ))
+            }
         </div>
     );
 };

@@ -50,6 +50,7 @@ const UserChatRoom = () => {
             setErrorMessage("Your message was not sent: You have to state the subject of your conversation before sending messages.");
         } else {
             setNewMessage(resVal);
+            setErrorMessage('');
             resetForm();
         }
     }

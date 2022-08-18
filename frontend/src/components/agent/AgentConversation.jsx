@@ -56,7 +56,7 @@ const AgentConversation = () => {
             <h3>Agent's Conversations</h3>
             {
                 conversations.map((conversation) => (
-                    <div style={{ margin: '0 4px 5px', background: '#c5d6fc', padding: '0 5px 5px' }} key={conversation.id}>
+                    <div style={{ margin: '0 4px 5px', background: '#c5d6fc', margin: '0 0 8px', padding: '2px 5px 10px' }} key={conversation.id}>
                         <p>{conversation.subject}</p>
                         <button style={{ marginRight: '5px'}} id={conversation.customerId} name={conversation.id} onClick={ startConversation }>reply</button>
                         <button style={{ marginLeft: '5px'}} id={conversation.customerId} name={conversation.id} onClick={ closeConversation }>close</button>
