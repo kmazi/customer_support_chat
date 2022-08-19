@@ -11,24 +11,36 @@ const IncomingConversation = () => {
         const loadIncomingConversations = async () => {
             const conv = await fetch('http://0.0.0.0:3001/conversation?unattended=true');
             const res = await conv.json();
- 
+
             if (conv.status === 200) {
                 setConversations(res);
             }
         };
         loadIncomingConversations();
-    }, [conversations]);
+    }, []);
 
     useEffect(() => {
-        const eventSource = new EventSource('http://0.0.0.0:3001/conversation/unattended');
-        eventSource.onmessage = ((e) => {
-            console.log('The incoming data is --------------------------', e.data);
-            
+        const eventSource = new EventSource('http://0.0.0.0:3001/ssevent/conversation/unattended');
+        // Sub event listener for attended conversations.
+        eventSource.addEventListener('sub', (e) => {
+            const data = JSON.parse(e.data);
+            console.log('Delete data of id -------------', data.id);
+            setConversations((c) => (c.filter(
+                v => v.id !== data.id
+            )));
         });
+
+        // Add event listner for unattended conversations.
+        eventSource.addEventListener('add', (e) => {
+            const data = JSON.parse(e.data);
+            console.log('Incoming data is -------------', data);
+            setConversations((c) => ([...c, data]));
+        });
+
         return () => {
             eventSource.close();
         }
-    }, []);
+    });
 
     const joinAgentToConversation = async (e) => {
         const conversationId = e.currentTarget.name;
@@ -36,14 +48,11 @@ const IncomingConversation = () => {
 
         const update = await fetch(`http://0.0.0.0:3001/conversation/${conversationId}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ agentId }, null, 2)
         });
 
-        if (update.status === 200) {
-            const updatedConversation = conversations.filter(conv => conv.id !== conversationId);
-            setConversations(updatedConversation);
-        } else {
+        if (!(update.status === 200)) {
             alert('An error occurred while joining the conversation.');
         }
     };

@@ -1,5 +1,4 @@
-import { Body, Controller, Get, Inject, Logger, MessageEvent, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Query, Sse } from '@nestjs/common';
-import { interval, Observable, map } from 'rxjs';
+import { Body, Controller, Get, Inject, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { UpdateResult } from 'typeorm';
 import { CreateConversationDto, UpdateConversationDto } from './conversation.dto';
 import { Conversation } from './conversation.entity';
@@ -15,14 +14,6 @@ export class ConversationController {
         if (unattended) {
             return this.service.getUnattendedConversations();
         } else return this.service.getConversations();
-    }
-
-    @Sse('unattended')
-    public async getIncomingConversations(): Promise<Observable<MessageEvent>> {
-        const data = await this.service.getUnattendedConversations();
-        return interval(2000).pipe(
-            map((_) => ({ data: {name: 'Prince'} } as MessageEvent))
-        );
     }
 
     @Get(":id")
