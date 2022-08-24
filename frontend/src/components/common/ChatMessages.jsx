@@ -1,25 +1,25 @@
 import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
-const ChatMessages = (props) => {
+const ChatMessages = ({ convId, userId, role, newMessage }) => {
     const [messages, setMessages] = useState([]);
 
-    const convId = props.convId;
-    const userId = props.userId;
-    const role = props.role;
-    let margin1, margin2, bg1, bg2 = null;
+    let margin1, margin2, bg1, bg2, float1, float2 = null;
 
     switch (role) {
         case 'customer':
             margin1 = '0 5px 5px 94px';
             margin2 = '0 94px 5px 5px';
+            float1 = 'right';
+            float2 = 'left';
             bg1 = '#c5d6fc';
             bg2 = '#cfe8ff';
             break;
         case 'agent':
             margin1 = '0 94px 5px 5px';
             margin2 = '0 5px 5px 94px';
+            float2 = 'right';
+            float1 = 'left';
             bg2 = '#c5d6fc';
             bg1 = '#cfe8ff';
         default:
@@ -45,7 +45,13 @@ const ChatMessages = (props) => {
             }
         };
         loadMessages();
-    });
+    }, []);
+
+    useEffect(() => {
+        if(Object.keys(newMessage).length > 0) {
+            setMessages(m => [...m, newMessage]);
+        } 
+    }, [newMessage]);
 
     return (
         <div style={{ paddingBottom: '10px', minHeight: '450px' }}>
@@ -53,8 +59,10 @@ const ChatMessages = (props) => {
             {
                 messages.map(message => (
 
-                    <div style={{ margin: message.agentId === null ? margin1 : margin2, background: message.agentId === null ? bg1 : bg2, padding: '2px 5px' }} key={message.id}>
-                        <p style={{ padding: '0 5px 5px' }}>{message.body}</p>
+                    <div key={message.id}>
+                        <p style={{ margin: message.agentId === null ? margin1 : margin2, display: 'inline-block', 
+                            float: message.agentId === null ? float1 : float2, clear: 'both', 
+                            background: message.agentId === null ? bg1 : bg2, padding: '12px 5px' }}>{message.body}</p>
                     </div>
 
                 ))

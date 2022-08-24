@@ -35,7 +35,8 @@ export class ConversationService {
 
     public async updateConversation(id: number, data: UpdateConversationDto): Promise<UpdateResult> {
         const updatedConversation = await this.conversationRepository.update(id, data);
-        if (!data.closed && data.agentId) this.sseventService.addEvent({data: { id }, type: 'sub'});
+        const conv = await this.getConversation(id);
+        if (!data.closed && data.agentId) this.sseventService.addEvent({data: { id, conversation: conv }, type: 'sub'});
         return updatedConversation;
     }
 

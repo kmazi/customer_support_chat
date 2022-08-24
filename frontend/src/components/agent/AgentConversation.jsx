@@ -17,11 +17,23 @@ const AgentConversation = () => {
             if (conv.status === 200) {
                 setConversations(res);
             }
-            
         };
 
         loadAgentConversations()
-    });
+    }, []);
+
+    useEffect(() => {
+        const eventSource1 = new EventSource('http://0.0.0.0:3001/ssevent/conversation/unattended');
+        // Sub event listener for attended conversations.
+        eventSource1.addEventListener('sub', (e) => {
+            const data = JSON.parse(e.data);
+            setConversations(c => [data.conversation, ...c]);
+        });
+
+        return () => {
+            eventSource1.close();
+        };
+    }, []);
 
     const startConversation = (e) => {
         const btn = e.currentTarget;

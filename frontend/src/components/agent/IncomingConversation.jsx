@@ -24,7 +24,6 @@ const IncomingConversation = () => {
         // Sub event listener for attended conversations.
         eventSource.addEventListener('sub', (e) => {
             const data = JSON.parse(e.data);
-            console.log('Delete data of id -------------', data.id);
             setConversations((c) => (c.filter(
                 v => v.id !== data.id
             )));
@@ -33,14 +32,13 @@ const IncomingConversation = () => {
         // Add event listner for unattended conversations.
         eventSource.addEventListener('add', (e) => {
             const data = JSON.parse(e.data);
-            console.log('Incoming data is -------------', data);
             setConversations((c) => ([...c, data]));
         });
 
         return () => {
             eventSource.close();
-        }
-    });
+        };
+    }, []);
 
     const joinAgentToConversation = async (e) => {
         const conversationId = e.currentTarget.name;

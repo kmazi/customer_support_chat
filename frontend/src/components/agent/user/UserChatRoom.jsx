@@ -8,26 +8,23 @@ const UserChatRoom = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [newMessage, setNewMessage] = useState({});
-    const [errorMessage, setErrorMessage] = useState('');
-    const [hideConvForm, setHideConvForm] = useState(true);
-    const [convStatus, setConvStatus] = useState('');
-    const [convId, setConvId] = useState(null);
-
     const userId = location.state.chatUserId;
     const agentId = location.state.chatAgentId;
     const chatUserRole = location.state.chatUserRole;
+    const conversationId = location.state.chatConvId;
+
+    const [newMessage, setNewMessage] = useState({});
+    const [errorMessage, setErrorMessage] = useState('');
+    const [hideConvForm, setHideConvForm] = useState(false);
+    const [convStatus, setConvStatus] = useState('');
+    const [convId, setConvId] = useState(conversationId);
 
     useEffect(() => {
-        const conversationId = location.state.chatConvId;
-        if (conversationId) setConvId(conversationId);
-    });
-
-    useEffect(() => {
-        if (convId) {
+        if (conversationId) {
+            setConvId(conversationId);
             setHideConvForm(true);
-        } else setHideConvForm(false);
-    });
+        }
+    }, []);
 
     async function sendMessage(values, { setSubmitting, resetForm }) {
         // Append customer detail value from state
@@ -48,6 +45,7 @@ const UserChatRoom = () => {
         const resVal = await resp.json();
         if (resp.status === 400) {
             setErrorMessage("Your message was not sent: You have to state the subject of your conversation before sending messages.");
+            if (resVal.error === 'This conversation has closed. Please start a new conversation.') setHideConvForm(false);
         } else {
             setNewMessage(resVal);
             setErrorMessage('');
@@ -55,7 +53,7 @@ const UserChatRoom = () => {
         }
     }
 
-    async function createConversation(values, { setSubmitting }) {
+    async function createConversation(values, { setSubmitting, resetForm }) {
         values.customerId = userId;
         const resp = await fetch('http://0.0.0.0:3001/conversation', {
             method: 'POST',
@@ -67,7 +65,10 @@ const UserChatRoom = () => {
         if (resp.status === 201) {
             const resVal = await resp.json();
             setConvId(resVal.id);
-            setConvStatus('You have successfully started a conversation.');
+            // reset status message and Hide conversation form
+            setConvStatus('');
+            setHideConvForm(true);
+            resetForm();
         } else {
             setConvStatus('Please set the subject for discussion.')
             return {}
@@ -118,7 +119,7 @@ const UserChatRoom = () => {
             <div>
                 <div style={{ border: 'solid 1px', width: '50%', paddingBottom: '10px' }}>
 
-                    <ChatMessages userId={userId} role={chatUserRole} convId={convId} agentId={agentId} />
+                    <ChatMessages userId={userId} role={chatUserRole} convId={convId} agentId={agentId} newMessage={newMessage} />
                     <Formik
                         initialValues={{ body: '' }}
                         validate={values => {

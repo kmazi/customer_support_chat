@@ -36,7 +36,6 @@ const SignIn = (props) => {
                 // Navigate to chat room after identifying user
                 const url = role === 'customer'? '/user/chats' : '/conversations/incoming';
                 navigate(url, {state: locationObj});
-
             } else {
                 setError("User does not exist in the database.");
             }
